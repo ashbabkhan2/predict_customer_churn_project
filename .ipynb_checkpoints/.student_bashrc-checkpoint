@@ -1,0 +1,3 @@
+export PATH=/data/bin:$PATH
+export PYTHONPATH=/data/bin
+source /data/bin/activate
