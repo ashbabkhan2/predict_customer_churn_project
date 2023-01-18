@@ -2,19 +2,22 @@
 Author : ashbab
 Date : 18 Jan 2023
 
-this file will store variables which will be used 
+this file will store variables which will be used
 all of the files in this directory the main use of this
 file is that it is accessible to all the files of this directory
 """
 
 import pytest
+
+
 def df_plugin():
     """
     Input : None
-    
-    Return : None 
+
+    Return : None
     """
     return None
+
 
 def pytest_configure():
     """
@@ -23,10 +26,10 @@ def pytest_configure():
 
     Input : None
 
-    Return : None 
+    Return : None
 
     """
-    pytest.df = df_plugin()    
+    pytest.df = df_plugin()
     pytest.y_train = df_plugin()
     pytest.y_test = df_plugin()
     pytest.X_train = df_plugin()
