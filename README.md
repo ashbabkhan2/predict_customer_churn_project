@@ -8,11 +8,6 @@ In this project we have to test a churn_notebook.ipynb file we make two main fil
 churn_library.py file contain functions which we have to test using the
 churn_script_logging_and_test.py file 
 
-To test the file we have to run command in terminal 
-  python churn_script_and_logging_and_tests.py
-
-this will start testing our churn_notebook.py file  and generate our model and saved image to images folder and save model to model folder. 
-
 ## Files and data description
 there are 4 folders in our project and the remaining are files
   1. Data (Folder) : this folder contain our data which is bank data csv     file
@@ -24,11 +19,12 @@ there are 4 folders in our project and the remaining are files
   7. churn_script_logging_and_tests.py: this file is used to test the churn_library.py file
   8. conftest.py: when we are working with the above files we need some file in which we store variables and then we fetch it whever we need it and its scope is the entire directory 
   
-  
-
-
 ## Running Files
-How do you run your files? What should happen when you run your files?
+
+To test the file we have to run command in terminal 
+  python churn_script_and_logging_and_tests.py
+
+this will start testing our churn_library.py file and generate our model and saved image to images folder and save model to model folder. 
 
 
 
