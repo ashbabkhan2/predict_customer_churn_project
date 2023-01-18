@@ -5,150 +5,168 @@ Author: Ashbab khan
 Date: 12-Jan-2023
 """
 
-# import os
 import churn_library
 import pytest
 import logging
 import os
 os.environ['QT_QPA_PLATFORM'] = 'offscreen'
-# import pandas as pd
-# import churn_library_solution as cls
-# global_df = churn_library.import_data("./data/bank_data.csv")
 
+# configuring our logging model
 logging.basicConfig(
     filename='./logs/churn_library.log',
     level=logging.INFO,
     filemode='w',
     format='%(name)s - %(levelname)s - %(message)s')
 
-# global_df = churn_library.import_data("")
-
-@pytest.fixture(scope="module")
-def path():
-	data_path = "./data/bank_data.csv"
-	yield data_path
-
-@pytest.fixture(scope="module")
-def test_import(path):
+def test_import(import_data):
 	'''
-	test data import - this example is completed for you to assist with the other test functions
+	test data import - Used to test import_data function 
+	Input : import_data function
+
+	Return :
+	        Nothing 
+	         
 	'''
+	# importing data and saving our log message successfull or fail
 	try:
-		df = churn_library.import_data(path)
-# 		global_df = df
+		df = import_data("./data/bank_data.csv")
 		logging.info("Testing import_data: SUCCESS")
-	except FileNotFoundError:
+	except FileNotFoundError as err:
 		logging.error("Testing import_eda: The file wasn't found")
-# 		raise err
+		raise err
 
-
-# 	return df
-
+	# checking the rows and column of our dataframe	
 	try:
 		assert df.shape[0] > 0
 		assert df.shape[1] > 0
-	except AssertionError:
+	except AssertionError as err:
 		logging.error(
 		    "Testing import_data: The file doesn't appear to have rows and columns")
-# 		raise err
+		raise err	
+	pytest.df = df	
+	
 
-	yield df
+def test_eda(perform_eda):
+	'''
+	test eda : this function is testing the perform_eda function
+	'''
+	# saving variable df back to conftest.py variable using pytest
+	df = pytest.df
 
-# @pytest.fixture(scope="module")
-def test_eda(test_import):
-	'''
-	test perform eda function
-	'''
-	# df = test_import(churn_library.import_data)
 	try:
-		df_a = churn_library.perform_eda(test_import)
-		print(df_a.columns)
+		test_eda_df = perform_eda(df)
 		logging.info("Testing test_eda : Successful")
-	except AttributeError:
+	except AttributeError as err:
 		logging.error("Testing test_eda : Please enter a dataframe object")
+		raise err
 
-	return df_a	
-# 		raise err
-
-
-
-# def test_encoder_helper(df):
-# 	'''
-# 	test encoder helper
-# 	'''
-# 	cat_columns = [
-#     'Gender',
-#     'Education_Level',
-#     'Marital_Status',
-#     'Income_Category',
-#     'Card_Category'
-#     ]
-
-# 	# df = test_import(churn_library.import_data)
-# 	try:
-# 		# encoder_helper(global_df,cat_columns)
-# 		encoder_df = churn_library.encoder_helper(df,cat_columns)
-# 		logging.info("Testing: test_encoder_helper:success")
-# 	except AttributeError:
-# 		logging.error("Error in test_encoder_help: please enter a dataframe")
-
-# 	return encoder_df	
-
-
-	# try:
-	# 	assert len(cat_columns) == 5
-	# 	logging.info("test_encoder_helper :success")
-	# except AssertionError:
-	# 	logging.error("test_encoder_helper : please include all 5 values in list")
+	pytest.df = test_eda_df	
 
 
 
-    # 	encoder_helper(df,cat_columns)
-	# 	logging.info("Testing: test_encoder_helper:success")
-	# except AssertionError:
-	#     logging.error("Error: ")
+def test_encoder_helper(encoder_help):
+	'''
+	test encoder helper : this will test the encoder_help function  
+	'''
+	cat_columns = [
+    'Gender',
+    'Education_Level',
+    'Marital_Status',
+    'Income_Category',
+    'Card_Category'
+    ]
+	df = pytest.df
 
-# def test_perform_feature_engineering(test_encoder_df):
-# 	'''
-# 	test perform_feature_engineering
-# 	'''
-# 	try:
-# 		data = churn_library.perform_feature_engineering(test_encoder_df)
-# 		logging.info("Testing feature Engineering: Success")
-# 	except:
-# 		logging.error("Error: in feature engineering")
+	try:
+		encoder_df = encoder_help(df,cat_columns)
+		logging.info("Testing: test_encoder_helper:success")
+	except AttributeError as err:
+		logging.error("Error in test_encoder_help: please enter a dataframe")
+		raise err
+
+	pytest.df = encoder_df	
+
+	# checking our cat_column so that it contain 5 values 
+	try:
+		assert len(cat_columns) == 5
+		logging.info("Testing test_encoder_helper :success")
+	except AssertionError as err:
+		logging.error("test_encoder_helper : please include all 5 values in list")
+		raise err
+
+def test_perform_feature_engineering(perform_feature_engineering):
+	'''
+	test perform_feature_engineering : this will test perform_feature_engineering
+	'''
+	df = pytest.df
+
+	# getting back our splitted value and then checking 
+	# so that it doesn't contain empty value 
+	try:
+		X_train,X_test,y_train,y_test = perform_feature_engineering(df)
+		assert X_train.shape[0]>0 and X_train.shape[1]>0
+		assert X_test.shape[0]>0 and X_test.shape[1]>0
+		assert y_train.shape[0]>0
+		assert y_test.shape[0]>0 
+		logging.info("Testing feature Engineering: Success")
+	except AssertionError as err:
+		logging.error("Error: in feature engineering")
+		raise err
+
+	# saving back to our conftest.py file using pytest	
+	pytest.X_train = X_train
+	pytest.X_test = X_test
+	pytest.y_train = y_train
+	pytest.y_test = y_test	
+
+def test_classification_report_image(classification_report_image):
+	"""
+	test_classification_report_image : testing classification_report_image
+
+	"""
+
+	# passing the required values from the variable store in conftest.py
+	try:
+		classification_report_image(pytest.y_train,pytest.y_test
+		,pytest.y_train_preds_lr,pytest.y_train_preds_rf,
+		pytest.y_test_preds_lr,pytest.y_test_preds_rf)
+		logging.info("test_classification_report:Success")
+	except:
+		logging.error("There is some issues in the test_classification_report")
 
 
+def test_feature_importance_plot(feature_importance):
+	"""
+	test_feature_importance_plot : testing feature_importance function
 
+	"""
+	path = "./images/results/feature_importance.png"
+	try:
+		feature_importance(pytest.cv_rfc,pytest.X_train,path)
+		logging.info("test_feature_importance_plot: Success")
+	except:
+		logging.error("Problem in the test_importance function")	
 
+def test_train_model(train_model):
+	"""
+	test_train_model : testing the train_model function
+	"""
+	
+	try:
+		train_model(pytest.X_train,pytest.X_test,pytest.y_train,pytest.y_test)
+		logging.info("testing train model success")
+	except:
+		logging.error("Problem in test train model")
 
+if __name__ == "__main__":
+	test_import(churn_library.import_data)
+	test_eda(churn_library.perform_eda)
+	test_encoder_helper(churn_library.encoder_helper)
+	test_perform_feature_engineering(churn_library.perform_feature_engineering)
+	test_classification_report_image(churn_library.classification_report_image)
+	test_feature_importance_plot(churn_library.feature_importance_plot)
 
-
-# def test_train_models(train_models):
-# 	'''
-# 	test train_models
-# 	'''
-
-
-# if __name__ == "__main__":
-# 	test_eda()
-
-	# df = test_import(churn_library.import_data)
-	# test_eda_df = test_eda(df)
-	# test_encoder_df = test_encoder_helper(test_eda_df)
-	# test_perform_feature_engineering(test_encoder_df)
-
-
-
-
-
-    # global_df = churn_library.import_data("./data/bank_data.csv")
-    # test_import(import_data)
-    # test_eda()
-    # test_encoder_helper(churn_library.encoder_helper)
-    # pass
-
-
+	test_train_model(churn_library.train_models)
 
 
 

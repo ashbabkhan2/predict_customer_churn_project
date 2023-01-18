@@ -1,0 +1,8 @@
+root - INFO - Testing import_data: SUCCESS
+root - INFO - Testing test_eda : Successful
+root - INFO - Testing: test_encoder_helper:success
+root - INFO - Testing test_encoder_helper :success
+root - INFO - Testing feature Engineering: Success
+root - INFO - test_classification_report:Success
+root - INFO - test_feature_importance_plot: Success
+root - INFO - testing train model success
