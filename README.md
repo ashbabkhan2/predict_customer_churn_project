@@ -3,9 +3,9 @@
 - Project **Predict Customer Churn** of ML DevOps Engineer Nanodegree Udacity
 
 ## Project Description
-In this project we have to test a churn_notebook.ipynb file we make two main file using that notebook file first is churn_notebook.ipynb and second is churn_script_logging_and_tests.py all we have to do to follow best practices and avoid repeatition of code.
+In this project we have to test a churn_notebook.ipynb file we make two main file using that notebook file first is churn_library.py and second is churn_script_logging_and_tests.py all we have to do to follow best practices and avoid repeatition of code.
 
-churn_notebook.py file contain functions which we have to test using the
+churn_library.py file contain functions which we have to test using the
 churn_script_logging_and_test.py file 
 
 To test the file we have to run command in terminal 
