@@ -151,11 +151,11 @@ def perform_feature_engineering(data_frame):
               target_train: y training data
               target_test: y testing data
     '''
-    data_frame1 = data_frame.head(100)
+    # data_frame1 = data_frame.head(100)
     # deleting output column making a input features X
-    input_features = data_frame1.drop("Churn", axis=1)
+    input_features = data_frame.drop("Churn", axis=1)
     # making our target variable
-    target_variable = data_frame1["Churn"]
+    target_variable = data_frame["Churn"]
 
     # splitting our input features X and target variable y
     # into four variables and distributing 30% to test variable
