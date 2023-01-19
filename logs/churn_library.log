@@ -1,8 +1,10 @@
 root - INFO - Testing import_data: SUCCESS
 root - INFO - Testing test_eda : Successful
+root - INFO - Testing test_eda : your file saved successfully
 root - INFO - Testing: test_encoder_helper:success
-root - INFO - Testing test_encoder_helper :success
+root - INFO - test_encoder_helper : all the 5 column successfully created
 root - INFO - Testing feature Engineering: Success
-root - INFO - test_classification_report:Success
-root - INFO - test_feature_importance_plot: Success
-root - INFO - testing train model success
+root - INFO - Testing test_classification_report :
+               random_forest_results and logistic_regression image successfully saved
+root - INFO - Testing test_feature_importance_plot: feature_importance image successfully saved
+root - INFO - Testing train model success : Images and model successfully saved

@@ -40,3 +40,4 @@ def pytest_configure():
     pytest.y_test_preds_rf = df_plugin()
     pytest.cv_rfc = df_plugin()
     pytest.lrc = df_plugin()
+
