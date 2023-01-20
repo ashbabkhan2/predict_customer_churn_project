@@ -20,14 +20,14 @@ import pytest
 import matplotlib.pyplot as plt
 import seaborn as sns
 sns.set_style("whitegrid")
-
+# plt.rcParams["figure.figsize"] = (20,10)
 # from sklearn.preprocessing import normalize
 
 
 os.environ['QT_QPA_PLATFORM'] = 'offscreen'
 
 # list of the numerical column that we need to make a ML model
-keep_cols = ['Customer_Age', 'Dependent_count', 'Months_on_book',
+KEEP_COLS = ['Customer_Age', 'Dependent_count', 'Months_on_book',
              'Total_Relationship_Count', 'Months_Inactive_12_mon',
              'Contacts_Count_12_mon', 'Credit_Limit', 'Total_Revolving_Bal',
              'Avg_Open_To_Buy', 'Total_Amt_Chng_Q4_Q1', 'Total_Trans_Amt',
@@ -35,7 +35,13 @@ keep_cols = ['Customer_Age', 'Dependent_count', 'Months_on_book',
              'Gender_Churn', 'Education_Level_Churn', 'Marital_Status_Churn',
              'Income_Category_Churn', 'Card_Category_Churn', "Churn"]
 
-# fig,ax = plt.subplots()
+CAT_COLUMNS = [
+        'Gender',
+        'Education_Level',
+        'Marital_Status',
+        'Income_Category',
+        'Card_Category']
+
 
 
 def import_data(pth):
@@ -66,53 +72,56 @@ def perform_eda(data_frame):
     data_frame["Churn"] = data_frame['Attrition_Flag'].apply(
         lambda val: 0 if val == "Existing Customer" else 1)
 
-    # plotting histogram
-    # fig1,ax1 = plt.subplots()
-    plt.figure(figsize=(20, 10))
-    plt.hist(data_frame["Churn"])
+    # plotting bar plot
+    plt.figure(figsize=(20,10))
+    ax = plt.axes()
+    plt.bar(x = data_frame["Churn"].value_counts().index,
+            height = data_frame["Churn"].value_counts().values)
+    # setting x labels to meaningful names
+    ax.set_xticks([0,1])        
+    ax.set_xticklabels(["Existing_Customers","Others"])
 
     # saving these plot image into image/eda path
     plt.savefig("./images/eda/churn_distribution.png")
+    plt.clf()
 
-    # fig2,ax2 = plt.subplots()
-    plt.figure(figsize=(20, 10))
+    plt.figure(figsize=(20,10))
     # making plot of distribution of the customer age column
     plt.hist(data_frame['Customer_Age'])
     # then saving it to image/eda path
     plt.savefig("./images/eda/Customer_age_distribution.png")
+    plt.clf()
 
-    # fig3,ax3 = plt.subplots()
-    plt.figure(figsize=(20, 10))
+    plt.figure(figsize=(20,10))
     # making a bar chart of marital status column
-    data_frame["Marital_Status"].value_counts("normalize").plot(kind="bar")
-    # df.Marital_Status.value_counts('normalize').plot(kind='bar')
+    plt.bar(x = data_frame["Marital_Status"].value_counts().index,
+            height = data_frame["Marital_Status"].value_counts().values)
     # saving this bar plot to image/eda path
     plt.savefig("./images/eda/marital_status_distribution.png")
+    plt.clf()
 
-    # fig4,ax4 = plt.subplots()
-    plt.figure(figsize=(20, 10))
     # making a histplot of Total_transaction_Ct column
-    # sns.histplot(df['Total_Trans_Ct'], stat='density', kde=True)
-    plt.hist(data_frame["Total_Trans_Ct"])
+    plt.figure(figsize=(20,10))
+    sns.histplot(data_frame['Total_Trans_Ct'], stat='density', kde=True)
     # saving this histplot to the path images/eda
     plt.savefig("./images/eda/total_transaction_distribution.png")
+    plt.clf()
 
-    plt.figure(figsize=(20, 10))
+    plt.figure(figsize=(20,10))
     # showing correlation between our columns using heatmap
     sns.heatmap(
         data_frame.corr(
         numeric_only=True),
         annot=True,
-        cmap='Dark2_r',
-        linewidths=2)
+        cmap='Dark2_r')
     # saving our heatmap to image/eda path
     plt.savefig("./images/eda/heatmap.png")
+    plt.clf()
     # plt.show()
     # plt.close()
     return data_frame
 
-
-def encoder_helper(data_frame, category_lst):
+def encoder_helper(data_frame):
     '''
     helper function to turn each categorical column into a new column with
     propotion of churn for each category - associated with cell 15 from the notebook
@@ -126,7 +135,7 @@ def encoder_helper(data_frame, category_lst):
     output:
             data_frame: pandas dataframe with new columns for
     '''
-    for lists in category_lst:
+    for lists in CAT_COLUMNS:
         list_values = []
         gender_groups = data_frame.groupby(lists).mean(numeric_only=True)['Churn']
 
@@ -136,7 +145,7 @@ def encoder_helper(data_frame, category_lst):
         names = lists + "_Churn"
         data_frame[names] = list_values
 
-    return data_frame[keep_cols]
+    return data_frame[KEEP_COLS]
 
 
 def perform_feature_engineering(data_frame):
@@ -175,7 +184,7 @@ def perform_feature_engineering(data_frame):
 
     # making a list of different hyper parameters and their
     # different value used in GridSearchCV
-    param_grid = {
+    PARAM_GRID = {
         'n_estimators': [200, 500],
         'max_features': ['sqrt'],
         'max_depth': [4, 5, 100],
@@ -185,7 +194,7 @@ def perform_feature_engineering(data_frame):
     # GridSearchCV this will used to select best value of hyper
     # parameters given in the param_grid dictionary
     print("Running GridSearchCV so it take some time to run")
-    cv_rfc = GridSearchCV(estimator=rfc, param_grid=param_grid, cv=5)
+    cv_rfc = GridSearchCV(estimator=rfc, param_grid=PARAM_GRID, cv=5)
 
     # fitting training data to our Random Classifier Model
     cv_rfc.fit(input_features_train, target_train)
@@ -203,7 +212,7 @@ def perform_feature_engineering(data_frame):
     y_test_preds_lr = lrc.predict(input_features_test)
 
     # Saving our important variable to confest.py so
-    # we can easily access these variable in future
+    # we can easily access these variable throughout directory
     pytest.lrc = lrc
     pytest.cv_rfc = cv_rfc
     pytest.y_train_preds_lr = y_train_preds_lr
@@ -235,8 +244,8 @@ def classification_report_image(target_train,
     '''
 
     # Plotting and saving classification report of Random Forest model
-    # plt.figure()
-    plt.figure(figsize=(5, 5))
+    plt.figure(figsize=(10,10))
+    # plt.rc("figure",figsize=(5, 5))
     plt.text(0.01, 1.25, str('Random Forest Train'), {
              'fontsize': 10}, fontproperties='monospace')
     plt.text(0.01, 0.05, str(classification_report(target_test, target_test_preds_rf)), {
@@ -245,12 +254,13 @@ def classification_report_image(target_train,
              'fontsize': 10}, fontproperties='monospace')
     plt.text(0.01, 0.7, str(classification_report(target_train, target_train_preds_rf)), {
              'fontsize': 10}, fontproperties='monospace')  # approach improved by OP -> monospace!
-    # plt.axis('off')
+    plt.axis('off')
     plt.savefig("./images/results/random_forest_results.png")
+    plt.clf()
 
     # Plotting and saving classification report of Logistic Regression model
-    # plt.figure()
-    plt.figure(figsize=(5, 5))
+    plt.figure(figsize=(10,10))
+    # plt.rc("figure",figsize=(5, 5))
     plt.text(0.01, 1.25, str('Logistic Regression Train'),
              {'fontsize': 10}, fontproperties='monospace')
     plt.text(0.01, 0.05, str(classification_report(target_train, target_train_preds_lr)), {
@@ -261,7 +271,7 @@ def classification_report_image(target_train,
              'fontsize': 10}, fontproperties='monospace')  # approach improved by OP -> monospace!
     # plt.axis('off')
     plt.savefig("./images/results/logistic_regression.png")
-
+    plt.clf()
 
 def feature_importance_plot(cv_rfc, input_features_data, output_pth):
     '''
@@ -283,7 +293,7 @@ def feature_importance_plot(cv_rfc, input_features_data, output_pth):
     names = [input_features_data.columns[i] for i in indices]
 
     # Create plot
-    plt.figure(figsize=(20, 5))
+    plt.figure(figsize=(20, 10))
 
     # Create plot title
     plt.title("Feature Importance")
@@ -298,6 +308,7 @@ def feature_importance_plot(cv_rfc, input_features_data, output_pth):
 
     # Saving our plot in the output_pth
     plt.savefig(output_pth)
+    plt.clf()
 
 
 def train_models(input_features_test, target_test):
@@ -327,25 +338,38 @@ def train_models(input_features_test, target_test):
     y_test_preds_proba_lr = lr_model.predict_proba(input_features_test)
 
     # plotting and saving roc_curve of Logistic Regression model
-    fpr_lr, tpr_lr, thr_lr = roc_curve(target_test, y_test_preds_proba_lr[:, 1])
-    plt.figure(figsize=(15, 8))
-    # ax = plt.gca()
+    fpr_lr, tpr_lr, _ = roc_curve(target_test, y_test_preds_proba_lr[:, 1])
     plt.plot(fpr_lr, tpr_lr, color="blue", label="Logistic regression")
-    plt.plot([0, 1], [0, 1])
-    plt.xlabel("false positive rate")
-    plt.ylabel("true positive rate")
-    plt.legend()
-    # rfc_disp = roc_curve(rfc_model, X_test, y_test, ax=ax, alpha=0.8)
-    # lrc_plot.plot(ax=ax, alpha=0.8)
-    plt.savefig("./images/results/logistic_roc_plot.png")
 
     # plotting and saving roc_curve of Random Forest Classifier model
-    fpr_rfc, tpr_rfc, thr_rfc = roc_curve(target_test, y_test_preds_proba_rf[:, 1])
-    plt.figure(figsize=(15, 8))
-    # ax = plt.gca()
-    plt.plot(fpr_rfc, tpr_rfc, color="green", label="Random forest classifier")
+    fpr_rfc, tpr_rfc, _ = roc_curve(target_test, y_test_preds_proba_rf[:, 1])
+    plt.plot(fpr_rfc, tpr_rfc, color="green", label="Random forest classifier")    
+    
     plt.plot([0, 1], [0, 1])
     plt.xlabel("false positive rate")
     plt.ylabel("true positive rate")
     plt.legend()
-    plt.savefig("./images/results/rfc_roc_curve.png")
+    plt.savefig("./images/results/roc_curve.png")
+    plt.clf()
+
+    if __name__ == "__main__":
+        import_data_df = import_data("./data/bank_data.csv")
+        perform_eda_df = perform_eda(import_data_df)
+        encoder_df = encoder_helper(perform_eda_df)
+        (X_train,X_test,y_train
+        ,y_test) = perform_feature_engineering(encoder_df)
+        classification_report_image(y_train,
+                                    y_test,
+                                    pytest.y_train_preds_lr,
+                                    pytest.y_train_preds_rf,
+                                    pytest.y_test_preds_lr,
+                                    pytest.y_test_preds_rf)
+        train_models(X_test,y_test)                            
+
+
+
+
+
+
+
+

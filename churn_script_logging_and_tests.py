@@ -81,17 +81,10 @@ def test_encoder_helper(encoder_help):
     '''
     test encoder helper : this will test the encoder_help function
     '''
-    cat_columns = [
-        'Gender',
-        'Education_Level',
-        'Marital_Status',
-        'Income_Category',
-        'Card_Category'
-    ]
     data_frame = pytest.df
 
     try:
-        encoder_df = encoder_help(data_frame, cat_columns)
+        encoder_df = encoder_help(data_frame)
         logging.info("Testing: test_encoder_helper:success")
     except AttributeError as err:
         logging.error("Error in test_encoder_help: please enter a dataframe")
@@ -122,7 +115,7 @@ def test_perform_feature_engineering(perform_feature_engineering):
     # getting back our splitted value and then checking
     # so that it doesn't contain empty value
     try:
-        (input_features_train, input_features_test,target_train,
+        (input_features_train, input_features_test, target_train,
          target_test) = perform_feature_engineering(data_frame)
         assert input_features_train.shape[0] > 0 and input_features_train.shape[1] > 0
         assert input_features_test.shape[0] > 0 and input_features_test.shape[1] > 0
@@ -195,8 +188,7 @@ def test_train_model(train_model):
             pytest.y_test)
         assert os.path.exists("./models/rfc_model.pkl")
         assert os.path.exists("./models/logistic_model.pkl")
-        assert os.path.exists("./images/results/logistic_roc_plot.png")
-        assert os.path.exists("./images/results/rfc_roc_curve.png")
+        assert os.path.exists("./images/results/roc_curve.png")
         logging.info(
             "Testing train model success : Images and model successfully saved")
     except AssertionError as err:
