@@ -5,10 +5,10 @@
 ### Table of contents
 #### [ Project Description ](#project-description)
 #### [ Technology used ](#technology-used)
-#### [Packages and library used in this project](#packages-and-library-used-in-this-project)
-#### [Files and data description](#files-and-data-description)
-#### [Essential files of this project](#essential-files-of-this-project)
-#### [Running Files](#running-files)
+#### [ Packages and library used in this project ](#packages-and-library-used-in-this-project)
+#### [ Files and data description ](#files-and-data-description)
+#### [ Essential files of this project ](#essential-files-of-this-project)
+#### [ Running Files ](#running-files)
 
 ## Project Description
 In this project, we have to test a churn_notebook.ipynb file we make two major files using the notebook file which are churn_library.py and the second is churn_script_logging_and_tests.py 
@@ -66,6 +66,12 @@ This file is used to test our code which is written in the churn_library.py file
 when we pass variables to the function the variable got updated and sometimes we need the updated variable as an argument to the next function so to build a module that stores variables for our files that is accessible throughout the directory.  
 
 ## Running Files
+
+We can run our churn_library.py file using python or ipython command 
+
+  ``` 
+  python churn_library.py 
+  ```
 
 Our main file is churn_library.py which is then tested by the churn_script_logging_and_tests.py
 So to perform the test we have to run the churn_script_logging_and_tests.py file using the python or ipython command.
