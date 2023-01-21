@@ -352,22 +352,20 @@ def train_models(input_features_test, target_test):
     plt.savefig("./images/results/roc_curve.png")
     plt.clf()
 
-    if __name__ == "__main__":
-        import_data_df = import_data("./data/bank_data.csv")
-        perform_eda_df = perform_eda(import_data_df)
-        encoder_df = encoder_helper(perform_eda_df)
-        (X_train,X_test,y_train
-        ,y_test) = perform_feature_engineering(encoder_df)
-        classification_report_image(y_train,
-                                    y_test,
-                                    pytest.y_train_preds_lr,
-                                    pytest.y_train_preds_rf,
-                                    pytest.y_test_preds_lr,
-                                    pytest.y_test_preds_rf)
-        train_models(X_test,y_test)                            
-
-
-
+if __name__ == "__main__":
+    import_data_df = import_data("./data/bank_data.csv")
+    perform_eda_df = perform_eda(import_data_df)
+    encoder_df = encoder_helper(perform_eda_df)
+    (X_train,X_test,y_train
+    ,y_test) = perform_feature_engineering(encoder_df)
+    classification_report_image(y_train,
+                                y_test,
+                                pytest.y_train_preds_lr,
+                                pytest.y_train_preds_rf,
+                                pytest.y_test_preds_lr,
+                                pytest.y_test_preds_rf)
+    feature_importance_plot(pytest.cv_rfc,X_train,"./images/results/feature_importance.png")                            
+    train_models(X_test,y_test)                            
 
 
 
